@@ -24,14 +24,20 @@ PI = math.pi
 # To convert from Degrees to Radians -> angle * (pi / 180)
 
 # Game Constants
-SIZE = (700, 500)
 FPS = 60
 SCREEN_WIDTH = 700
-SCREEN_HEIGHT = 500
+SCREEN_HEIGHT = 900
+SIZE = (SCREEN_WIDTH, SCREEN_HEIGHT)
 
 # Missile
 MISSILE_WIDTH = 5
 MISSILE_HEIGHT = 18
+
+# Enemy Images
+PLAYER = "assets/player.png"
+RED_ALIEN = "assets/red.png"
+GREEN_ALIEN = "assets/green.png"
+YELLOW_ALIEN = "assets/yellow.png"
 
 # Layout
 LAYOUT = ["00000000000000000000000000000000000000000000000000",
