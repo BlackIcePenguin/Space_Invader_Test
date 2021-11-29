@@ -70,5 +70,37 @@ class Missile(pygame.sprite.Sprite):
             self.kill()
 
 
+class Bomb(pygame.sprite.Sprite):
+    def __init__(self, display, x, y):
+        pygame.sprite.Sprite.__init__(self)
+        self.display = display
+        self.y_velo = 3.5
+
+        self.image = pygame.Surface((MISSILE_WIDTH, MISSILE_HEIGHT))
+        self.image.fill(RED)
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        pygame.draw.rect(self.image, RED, [self.rect.x, self.rect.y, MISSILE_WIDTH, MISSILE_HEIGHT])
+
+    def update(self):
+        self.rect.y += self.y_velo
+
+        if self.rect.top >= SCREEN_HEIGHT:
+            self.kill()
+
+
 class Block(pygame.sprite.Sprite):
-    pass
+    def __init__(self, display, x, y, color):
+        pygame.sprite.Sprite.__init__(self)
+        self.display = display
+        self.image = pygame.Surface((BLOCK_WIDTH, BLOCK_HEIGHT))
+        self.color = color
+        self.image.fill(self.color)
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        pygame.draw.rect(self.image, self.color, [self.rect.x, self.rect.y, BLOCK_WIDTH, BLOCK_HEIGHT])
+
+    def update(self):
+        pass
