@@ -100,7 +100,28 @@ class Block(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
+        self.health = 3
         pygame.draw.rect(self.image, self.color, [self.rect.x, self.rect.y, BLOCK_WIDTH, BLOCK_HEIGHT])
+
+    def update(self):
+        if self.health <= 2:
+            self.color = GREEN
+        if self.health <= 1:
+            self.color = RED
+        if self.health <= 0:
+            self.kill()
+        self.image.fill(self.color)
+
+
+class HealthBar(pygame.sprite.Sprite):
+    def __init__(self, display, x, y, image_path):
+        pygame.sprite.Sprite.__init__(self)
+        self.display = display
+        self.image = pygame.image.load(image_path)
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.lives = 3
 
     def update(self):
         pass

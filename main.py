@@ -1,7 +1,7 @@
 import pygame
 import random
 from settings import *
-from sprites import Player, Enemy, Missile, Bomb, Block
+from sprites import Player, Enemy, Missile, Bomb, Block, HealthBar
 
 pygame.init()
 
@@ -14,11 +14,12 @@ enemy_kill = pygame.mixer.Sound("assets/invaderkilled.wav")
 player_hurt = pygame.mixer.Sound("assets/ShipHit.wav")
 
 # Sprite Groups
-player_group = pygame.sprite.Group()  # Create sprite group for player
-missile_group = pygame.sprite.Group()  # Create sprite group for missile
-enemy_group = pygame.sprite.Group()  # Create sprite group for missile
+player_group = pygame.sprite.Group()
+missile_group = pygame.sprite.Group()
+enemy_group = pygame.sprite.Group()
 bomb_group = pygame.sprite.Group()
 block_group = pygame.sprite.Group()
+health_group = pygame.sprite.Group()
 all_sprites = pygame.sprite.Group()  # Group for all sprites
 
 # Player
@@ -33,23 +34,29 @@ for row_val in range(1, 6):
         enemy_group.add(enemy)
         all_sprites.add(enemy)
 
-for row_val in range(0, 50):
-    for column_val in range(0, 20):
+# Blocks
+for row_val in range(0, LAYOUT_LENGTH):
+    for column_val in range(0, LAYOUT_HEIGHT):
         if LAYOUT[column_val][row_val] == '1':
-            block = Block(screen, row_val, column_val, BLUE)
+            block = Block(screen, row_val * BLOCK_WIDTH, column_val * BLOCK_HEIGHT, BLUE)
             block_group.add(block)
             all_sprites.add(block)
+
+# Health Bar
+player_health = 3
+for val in range(0, player_health):
+    life = HealthBar(screen, 20 + 80 * val, 10, PLAYER)
+    health_group.add(life)
+    all_sprites.add(life)
 
 # font_medium = pygame.font.Font(unifont.ttf, 16) Does Not Work RN
 
 clock = pygame.time.Clock()
 
-player_health = 3
 enemy_reload = 0
 shot_fired = False
 
 running = True
-
 while running:
     # Get all input events (Keyboard, Mouse, Joystick, etc
     for event in pygame.event.get():
@@ -83,8 +90,15 @@ while running:
         enemy_kill.play()
     player_death = pygame.sprite.groupcollide(player_group, enemy_group, False, False)
     player_damage = pygame.sprite.groupcollide(player_group, bomb_group, False, True)
+    for item in list(block_group):
+        if pygame.sprite.spritecollide(item, bomb_group, True):
+            item.health -= 1
+        if pygame.sprite.spritecollide(item, missile_group, True):
+            item.health -= 1
     if player_damage:
         player_health -= 1
+        lost_life = health_group.sprites()[player_health]
+        lost_life.kill()
         player_hurt.play()
     if player_death or player_health <= 0:
         player.kill()
@@ -96,6 +110,7 @@ while running:
     bomb_group.draw(screen)
     player_group.draw(screen)
     block_group.draw(screen)
+    health_group.draw(screen)
     all_sprites.update()
 
     pygame.display.flip()
