@@ -39,6 +39,11 @@ RED_ALIEN = "assets/red.png"
 GREEN_ALIEN = "assets/green.png"
 YELLOW_ALIEN = "assets/yellow.png"
 
+# Fonts
+pygame.init()
+font_medium = pygame.font.Font("assets/unifont.ttf", 16)
+end_font = pygame.font.Font("assets/unifont.ttf", 30)
+
 # Layout
 LAYOUT = ["00000000000000000000000000000000000000000000000000",
           "00000000000000000000000000000000000000000000000000",
