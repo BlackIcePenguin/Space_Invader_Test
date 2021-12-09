@@ -27,7 +27,7 @@ class Player(pygame.sprite.Sprite):
 
 
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self, row_val, column_val):
+    def __init__(self, row_val, column_val, round_multiplier):
         pygame.sprite.Sprite.__init__(self)
         if row_val > 3.1:
             self.image_path = GREEN_ALIEN
@@ -39,14 +39,16 @@ class Enemy(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.enemy_edge = SCREEN_WIDTH // 10
         self.screen_divider = (SCREEN_WIDTH - self.enemy_edge) // 12
-        self.rect.center = self.enemy_edge + self.screen_divider * column_val, self.rect.height * row_val * 1.2
+        self.rect.center = self.enemy_edge + self.screen_divider * column_val, self.rect.height * row_val * 1.2 + 60
         self.y_velo = 0
-        self.x_velo = 3
+        self.x_velo = 1 * round_multiplier
 
-    def update(self):
-        if self.rect.right >= SCREEN_WIDTH or self.rect.left <= 0:
+    def update(self, collided):
+        # if self.rect.right >= SCREEN_WIDTH or self.rect.left <= 0:
+        self.collided = collided
+        if self.collided:
             self.x_velo *= -1
-            self.rect.y += self.rect.height
+            self.rect.y += self.rect.height / 2
         self.rect.x += self.x_velo
 
 

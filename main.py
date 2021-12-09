@@ -28,10 +28,13 @@ class Score:
         self.display.blit(play_again1, [130, 700])
         self.display.blit(play_again2, [160, 800])
 
-    def draw_timer(self):
-        # time_text = font_medium.render(f'Time until next wave : {int(time_count)}', True, WHITE)
-        # self.display.blit(time_text, [540, 60])
-        pass
+    def draw_timer(self, time_count):
+        time_text = end_font.render(f'Time until next wave : {int(time_count / 60)}', True, WHITE)
+        self.display.blit(time_text, [170, 300])
+        if time_count <= 0:
+            return True
+        else:
+            pass
 
 
 def start():
@@ -62,11 +65,12 @@ def game_play():
     all_sprites.add(player)
 
     # Enemy
+    round_multiplier = 1
     for row_val in range(1, 6):
         for column_val in range(0, 12):
-            enemy = Enemy(row_val, column_val)
+            enemy = Enemy(row_val, column_val, round_multiplier)
             enemy_group.add(enemy)
-            all_sprites.add(enemy)
+            # all_sprites.add(enemy)
 
     # Blocks
     for row_val in range(0, LAYOUT_LENGTH):
@@ -77,7 +81,7 @@ def game_play():
                 all_sprites.add(block)
 
     # Health Bar
-    player_health = 1
+    player_health = 3
     for val in range(0, player_health):
         life = HealthBar(screen, 20 + 80 * val, 10, PLAYER)
         health_group.add(life)
@@ -86,16 +90,16 @@ def game_play():
     clock = pygame.time.Clock()
 
     enemy_reload = 0
+    player_reload = 0
     shot_fired = False
-
+    countdown = False
     score = 0
-    beta = 0
+    time_count = 360
     running = True
-    if beta >= 1:
-        running = False
-    beta += 1
     while running:
         # Get all input events (Keyboard, Mouse, Joystick, etc
+        if player_reload > 0:
+            player_reload -= 1
         for event in pygame.event.get():
 
             # Look for specific event
@@ -103,10 +107,17 @@ def game_play():
                 running = False
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
-                    missile = Missile(screen, player.rect.centerx - MISSILE_WIDTH / 2, player.rect.top - 18)
-                    missile_group.add(missile)
-                    all_sprites.add(missile)
-                    fire_sound.play()
+                    if player_reload <= 0:
+                        player_reload = 10
+                        missile = Missile(screen, player.rect.centerx - MISSILE_WIDTH / 2, player.rect.top - 18)
+                        missile_group.add(missile)
+                        all_sprites.add(missile)
+                        fire_sound.play()
+                if event.key == pygame.K_k:
+                    player.kill()
+                if event.key == pygame.K_1:
+                    for enemy in enemy_group:
+                        enemy.kill()
 
         # Game logic (Objects fired, object movement) goes here
         enemy_reload += 1
@@ -134,12 +145,14 @@ def game_play():
                 item.health -= 1
             if pygame.sprite.spritecollide(item, missile_group, True):
                 item.health -= 1
+        if not enemy_group:
+            countdown = True
         if player_damage:
             player_health -= 1
             lost_life = health_group.sprites()[player_health]
             lost_life.kill()
             player_hurt.play()
-        if player_death or player_health <= 0:
+        if player_death or player_health <= 0 or not player_group:
             end = True
             while end:
                 screen.fill(BLACK)
@@ -155,15 +168,33 @@ def game_play():
                             return 0
             running = False
         # Add drawings here
-        screen.fill(BLACK)
-        points.draw_score(score)
+        collision = False
+        for enemy in enemy_group:
+            if enemy.rect.right >= SCREEN_WIDTH:
+                collision = True
+            elif enemy.rect.left <= 0:
+                collision = True
 
+        screen.fill(BLACK)
+        if countdown:
+            time_count -= 1
+            points.draw_timer(time_count)
+            if points.draw_timer(time_count) is True:
+                round_multiplier += 0.2
+                for row_val in range(1, 6):
+                    for column_val in range(0, 12):
+                        enemy = Enemy(row_val, column_val, round_multiplier)
+                        enemy_group.add(enemy)
+                time_count = 360
+                countdown = False
+        points.draw_score(score)
         enemy_group.draw(screen)
         missile_group.draw(screen)
         bomb_group.draw(screen)
         player_group.draw(screen)
         block_group.draw(screen)
         health_group.draw(screen)
+        enemy_group.update(collision)
         all_sprites.update()
 
         pygame.display.flip()
@@ -172,14 +203,11 @@ def game_play():
 
 
 playing = True
-alpha = 3
 while playing:
     if game_play() == 100:
         pass
     else:
         playing = False
-    game_play()
 
 
 pygame.quit()
-
