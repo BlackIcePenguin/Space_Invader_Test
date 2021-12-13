@@ -23,7 +23,7 @@ class Score:
         play_again1 = end_font.render(f'Press SPACE to start a new game', True, WHITE)
         play_again2 = end_font.render(f'Press any other key to quit', True, WHITE)
         self.display.blit(score_value1, [295, 50])
-        self.display.blit(score_value2, [160, 150])
+        self.display.blit(score_value2, [140, 150])
         self.display.blit(score_value3, [220, 425])
         self.display.blit(play_again1, [130, 700])
         self.display.blit(play_again2, [160, 800])
@@ -38,7 +38,31 @@ class Score:
 
 
 def start():
-    pass
+    start1 = end_font.render(f'Welcome to Space Invaders!', True, BLUE)
+    start2 = end_font.render(f'Your goal is to destroy as many aliens', True, WHITE)
+    start3 = end_font.render(f'as possible before you die', True, WHITE)
+    start4 = end_font.render(f'Aliens are worth 1 point', True, WHITE)
+    # start5 = end_font.render(f'The UFO is worth 5 points', True, WHITE)
+    start6 = end_font.render(f'Press SPACE to fire', True, WHITE)
+    start7 = end_font.render(f'Move left and right with the arrow keys', True, WHITE)
+    start8 = end_font.render(f'Press any key to start', True, GREEN)
+    screen.fill(BLACK)
+    screen.blit(start1, [160, 50])
+    screen.blit(start2, [70, 200])
+    screen.blit(start3, [150, 250])
+    screen.blit(start4, [170, 400])
+    # screen.blit(start5, [165, 450])
+    screen.blit(start6, [190, 600])
+    screen.blit(start7, [60, 650])
+    screen.blit(start8, [175, 800])
+    pygame.display.flip()
+    waiting = True
+    while waiting:
+        for z in pygame.event.get():
+            if z.type == pygame.QUIT:
+                return False
+            if z.type == pygame.KEYDOWN:
+                return True
 
 
 points = Score(screen)
@@ -204,6 +228,11 @@ def game_play():
 
 playing = True
 while playing:
+    if not start():
+        playing = False
+        break
+    else:
+        pass
     if game_play() == 100:
         pass
     else:
