@@ -127,3 +127,29 @@ class HealthBar(pygame.sprite.Sprite):
 
     def update(self):
         pass
+
+
+class Explosion(pygame.sprite.Sprite):
+    def __init__(self, center):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = EXPLOSION_LIST[0]
+        self.rect = self.image.get_rect()
+        self.rect.center = center
+        self.frame = 0
+        self.frame_rate = 50
+        self.kill_center = center
+        self.prev_update = pygame.time.get_ticks()
+
+    def update(self):
+        current_time = pygame.time.get_ticks()
+        if current_time - self.prev_update > self.frame_rate:
+            self.prev_update = current_time
+            self.frame += 1
+        if self.frame >= len(EXPLOSION_LIST):
+            self.kill()
+        else:
+            self.image = EXPLOSION_LIST[self.frame]
+            self.rect = self.image.get_rect()
+            self.rect.center = self.kill_center
+
+

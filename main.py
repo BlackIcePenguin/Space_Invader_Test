@@ -1,7 +1,7 @@
 import pygame
 import random
 from settings import *
-from sprites import Player, Enemy, Missile, Bomb, Block, HealthBar
+from sprites import Player, Enemy, Missile, Bomb, Block, HealthBar, Explosion
 
 pygame.init()
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -81,6 +81,7 @@ def game_play():
     bomb_group = pygame.sprite.Group()
     block_group = pygame.sprite.Group()
     health_group = pygame.sprite.Group()
+    explosion_group = pygame.sprite.Group()
     all_sprites = pygame.sprite.Group()  # Group for all sprites
 
     # Player
@@ -161,6 +162,9 @@ def game_play():
             if pygame.sprite.spritecollide(item, missile_group, True):
                 enemy_kill.play()
                 score += 1
+                explosion = Explosion(item.rect.center)
+                explosion_group.add(explosion)
+                all_sprites.add(explosion)
                 item.kill()
         player_death = pygame.sprite.groupcollide(player_group, enemy_group, False, False)
         player_damage = pygame.sprite.groupcollide(player_group, bomb_group, False, True)
@@ -211,6 +215,7 @@ def game_play():
                         enemy_group.add(enemy)
                 time_count = 360
                 countdown = False
+        # Drawing to screen
         points.draw_score(score)
         enemy_group.draw(screen)
         missile_group.draw(screen)
@@ -218,6 +223,8 @@ def game_play():
         player_group.draw(screen)
         block_group.draw(screen)
         health_group.draw(screen)
+        explosion_group.draw(screen)
+        # Updating on Screen
         enemy_group.update(collision)
         all_sprites.update()
 

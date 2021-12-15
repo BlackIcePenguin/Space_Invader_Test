@@ -18,6 +18,11 @@ OCEAN_BLUE = (26, 117, 255)
 PEACH = (255, 204, 153)
 COLORS = [RED, GREEN, BLUE, WHITE]
 
+EXPLOSION_LIST = []
+for i in range(8):
+    image_path = pygame.image.load(f"assets/sprite_{i}.png")
+    EXPLOSION_LIST.append(image_path)
+
 # Create Math Constant
 PI = math.pi
 
